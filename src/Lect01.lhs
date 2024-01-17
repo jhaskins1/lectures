@@ -46,8 +46,9 @@ do your work in this class. They include:
 
 - GitHub, a Git hosting service
 
-- Stack, a tool you'll use to install the Haskell compiler and libraries,
-  and compile and test your code
+- GHCUp, an installer for Haskell development tools
+
+- GHC, the Glasgow Haskell Compiler
 
 - a source code editor with Haskell support --- I recommend Visual Studio Code
   with the Haskelly plugin unless you strongly prefer a different editor and
