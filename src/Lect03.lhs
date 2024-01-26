@@ -32,11 +32,12 @@ E.g., define the following functions:
 
 
 \begin{code}
-nand :: Bool -> Bool -> Bool
-nand x y = undefined
+nand :: Bool -> Bool -> Bool -- type inference engine can figure this out, but we write it out anyway for documentation purposes; sometimes important to include this
+-- nand x y = not (x && y)
+nand x y = not $ x && y -- $ replaces ()
 
 distance :: (Floating a) => (a, a) -> (a, a) -> a
-distance p1 p2 = undefined
+distance p1 p2 = sqrt ((fst p1 - fst p2)^2 + (snd p1 - snd p2)^2) -- KINDA UGLY NGL
 \end{code}
 
 
@@ -48,7 +49,9 @@ E.g., define `not` using pattern matching:
 
 \begin{code}
 not' :: Bool -> Bool
-not' = undefined
+not' True = False
+-- not' False = True -- this works, but the _ is more conventional
+not' _ = True -- _ is just a variable whose value we don't care about by convention
 \end{code}
 
 
@@ -58,7 +61,9 @@ E.g., define `fib` (to return the nth Fibonacci number ) using pattern matching:
 
 \begin{code}
 fib :: Integer -> Integer
-fib = undefined
+fib 0 = 0
+fib 1 = 1
+fib n = fib (n-1) + fib (n-2)
 \end{code}
 
 
@@ -68,7 +73,8 @@ E.g., define `nand` again using pattern matching:
 
 \begin{code}
 nand' :: Bool -> Bool -> Bool
-nand' = undefined
+nand' True True = False
+nand' _    _    = True
 \end{code}
 
 
@@ -78,18 +84,19 @@ E.g., define `fst` and `snd` using pattern matching:
 
 \begin{code}
 fst' :: (a,b) -> a
-fst' = undefined
+fst' (x,_) = x -- variables are matched against contents in the input tuple
 
 snd' :: (a,b) -> b
-snd' = undefined
+snd' (_,y) = y 
 \end{code}
+-- Pattern matching often preferred way to deconstruct stuff
 
 
 E.g., redefine `distance` using pattern matching:
 
 \begin{code}
 distance' :: (Floating a) => (a, a) -> (a, a) -> a
-distance' = undefined
+distance' (x1,y1) (x2,y2) = sqrt ((x1 - x2)^2 + (y1 - y2)^2) -- much clearer than previous
 \end{code}
 
 
@@ -97,7 +104,7 @@ E.g., define the `mapTup` function using pattern matching:
 
 \begin{code}
 mapTup :: (a -> b) -> (a, a) -> (b, b)
-mapTup = undefined
+mapTup f (x,y) = (f x,f y)
 \end{code}
 
 
@@ -107,7 +114,10 @@ E.g., implement the (very contrived) function `foo`:
 
 \begin{code}
 foo :: (a, (b, c)) -> ((a, (b, c)), (b, c), (a, b, c))
-foo = undefined
+-- foo t = (t, snd t, (fst t, fst (snd t), snd (snd t))) -- EW EW EW
+-- foo (x, (y, z)) = ((x, (y, z)), (y, z), (x, y, z)) -- also EW
+-- foo (x, t) = ((x, t), t, (x, fst t, snd t)) -- not as bad
+foo s@(x, t@(y, z)) = (s, t, (x, y, z)) -- POG; the @ names a subpattern
 \end{code}
 
 

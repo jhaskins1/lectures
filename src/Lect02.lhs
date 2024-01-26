@@ -95,9 +95,9 @@ E.g., interpret the following functions that map from a `Bool` and a `Char` to a
 
     foo1 :: (Bool, Char) -> Int
 
-    foo2 :: Bool -> (Char -> Int)
+    foo2 :: Bool -> (Char -> Int) 'Curried' function meaning that it takes one arg at a time
 
-    foo3 :: Bool -> Char -> Int
+    foo3 :: Bool -> Char -> Int -- Behaves the same as foo2
 
 
 Functions of multiple arguments in Haskell are "curried". 
@@ -110,7 +110,7 @@ Functions of multiple arguments in Haskell are "curried".
 
 Aside: what about:
 
-    foo4 :: (Bool -> Char) -> Int
+    foo4 :: (Bool -> Char) -> Int -- Takes a function and returns an int
 
 
 "Operators"
@@ -154,12 +154,12 @@ Some functions don't care about the specific types of some args/return values.
 
 Check out these polymorphic functions? Can you guess what they do?
   
-      id
-      const
-      fst
-      snd
-      .
-      flip
+      id -- Identity function 
+      const -- Gives a constant a for any input b
+      fst -- Takes a tuple and gives first thing
+      snd -- Takes a tuple and gives second thing
+      . -- Combines two functions
+      flip -- Takes a binary function and returns the value of computing that function with the two arguments switched
   
 
 The type declaration of a polymorphic function can give a lot of information about what the function does! (Why?)
@@ -183,9 +183,9 @@ Just as a type is a collection of related values, a type *class* is a collection
 
 Check out these classes and their methods:
 
-    Eq
-    Ord
-    Num
+    Eq -- Equatables (things that can be compared for equality)
+    Ord -- Orderables (things that can be ordered)
+    Num -- Numbers (ints, floats, etc.)
     Enum
     Integral
     Bounded
