@@ -19,6 +19,7 @@ import Data.Map (Map, empty, fromList, (!), keys, elems, assocs,
                  findWithDefault, member, insert, insertWith)
 import System.Random
 import System.Random.Shuffle
+import Control.Monad
 import Control.Monad.State
 import System.IO
 import System.Console.ANSI
