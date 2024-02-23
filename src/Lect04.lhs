@@ -4,7 +4,8 @@
 
 > module Lect04 where
 > import Data.Char
-
+> import Lect01 (x)
+  
 Lists
 =====
 
@@ -91,21 +92,24 @@ Functions that construct lists typically:
 E.g., implement the following list construction functions:
 
 > replicate' :: Int -> a -> [a]
-> replicate' = undefined
+> replicate' 0 _ = []
+> replicate' n x = x : replicate' (n-1) x
 >
-> enumFromTo' :: (Ord a, Enum a) => a -> a -> [a]
-> enumFromTo' = undefined
+> enumFromTo' :: (Ord a, Enum a) => a -> a -> [a] -- a has to be enumerable and orderable
+> enumFromTo' x y | x > y = []
+>                 | x == y = [x]
+>                 | otherwise = x : enumFromTo' (succ x) y
 >
 > -- and now for some infinite lists
 >
 > ones :: [Int]
-> ones = undefined
+> ones = 1 : ones
 > 
 > repeat' :: a -> [a]
-> repeat' = undefined
+> repeat' x = x : repeat' x
 >
 > enumFrom' :: Enum a => a -> [a]
-> enumFrom' = undefined
+> enumFrom' x = x : enumFrom' (succ x)
 
 
 Note: use `take` to limit the number of values drawn from an infinite list
@@ -128,7 +132,7 @@ Syntax:
 
 E.g.,
 
-> evens = [2*x | x <- [1..]]
+> evens = [2*x | x <- [1..]] -- read | as 'where'
 >
 > evens' = [x | x <- [1..], x `mod` 2 == 0]
 >
@@ -140,13 +144,13 @@ E.g.,
 E.g., try implementing:
 
 > factors :: Integral a => a -> [a]
-> factors = undefined
+> factors n = [f | f <- [1..n], n `mod` f == 0]
 >
 > cartesianProduct :: [a] -> [b] -> [(a,b)]
-> cartesianProduct = undefined
+> cartesianProduct xs ys = [(x,y) | x <- xs, y <- ys] -- y <- ys is the 'inner loop' so we go thru it first
 >
-> concat' :: [[a]] -> [a]
-> concat' = undefined
+> concat' :: [[a]] -> [a] -- 'flattens' a list of lists
+> concat' ls = [x | l <- ls, x <- l]
 
 
 Common list functions
@@ -161,9 +165,9 @@ implemented above). They include:
     tail :: [a] -> [a]
     null :: [a] -> Bool
     length :: [a] -> Int
-    last :: [a] -> a
-    (++) :: [a] -> [a] -> [a]
-    (!!) :: [a] -> Int -> a
+    last :: [a] -> a -- traverses all list elements
+    (++) :: [a] -> [a] -> [a] -- adds lists together
+    (!!) :: [a] -> Int -> a -- index function; very inefficient at O(n) time complexity
 
   - Building lists:
 
@@ -175,14 +179,14 @@ implemented above). They include:
 
     concat :: [[a]] -> [a]
     reverse :: [a] -> [a]
-    zip :: [a] -> [b] -> [(a,b)]
+    zip :: [a] -> [b] -> [(a,b)] -- zips two lists together
 
   - Extracting sublists:
 
     take :: Int -> [a] -> [a]
     drop :: Int -> [a] -> [a]
-    splitAt :: Int -> [a] -> ([a], [a])
-    break :: (a -> Bool) -> [a] -> ([a], [a])
+    splitAt :: Int -> [a] -> ([a], [a]) -- partitions a list at a point
+    break :: (a -> Bool) -> [a] -> ([a], [a]) -- partitions list by a predicate
 
   - Class specific:
 
@@ -209,7 +213,7 @@ value constructors can be used for pattern matching).
 E.g., implement:
 
 > head' :: [a] -> a
-> head' = undefined
+> head' (x:_) = x
 >
 > tail' :: [a] -> [a]
 > tail' = undefined
