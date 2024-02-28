@@ -6,7 +6,7 @@
 module Lect07 where
 import Prelude hiding (($), (.), flip, on, and,
                        map, filter, any, all, iterate, until,
-                       foldr, foldl, foldr1, foldl1)
+                       foldr, foldl, foldr1, foldl1) -- Hiding the functions so that we can implement them
 import Data.Char
 import Data.Bits ( Bits(xor) )
 import Data.Function hiding (($), (.), flip, on)
@@ -31,7 +31,7 @@ A higher-order function (HOF) is a function that takes a function as a parameter
 They are a fundamental tool in functional programming.
 
 The term "combinator" is often used to refer to HOFs that combine or apply argument functions to do all their work.
-
+- Subset of HOFs that combine functions to create a new function
 
 Basic combinators
 -----------------
@@ -41,35 +41,46 @@ Basic combinators
 \begin{code}
 ($) :: (a -> b) -> a -> b
 infixr 0 $
-($) = undefined
+f $ x = f x 
 \end{code}
 
 It seems redundant (why?), but is quite useful in practice!
+
+-- Useful because $ has low precedence, so can do even $ 5+2 instead of even (5+2)
+-- not (even(5+2))
+-- not $ even $ 5+2
+-- Fn application is left-associative, but infixr 0 $ says that $ is right-associative (which is how it is designed to be)
 
 E.g., how can we rewrite the following expresions?
 
 \begin{verbatim}
   putStrLn ("Hello" ++ " " ++ "World")
+  putStrLn $ "Hello" ++ " " ++ "World"
 
   show (abs (2 - 5))
+  show $ abs $ 2-5
 
   take 5 (drop 10 (zip [1..] (repeat 'a')))
+  take 5 $ drop 10 $ zip [1..] $ repeat 'a'
+
 \end{verbatim}
 
 
 2. Composition
+-- \ IS LAMBDA, so can do \x -> x + 1 is a function that adds 1
 
 \begin{code}
 (.) :: (b -> c) -> (a -> b) -> a -> c
 infixr 9 .
-(.) = undefined
+f . g = \x -> f $ g x
 \end{code}    
 
 E.g., re-implement `even'`, `k2h`, and `strip` with composition:
 
 \begin{code}
 even' :: Integral a => a -> Bool
-even' x = 0 == (x `rem` 2)
+--even' x = 0 == (x `rem` 2)
+even' = (== 0) . (`rem` 2)
 
 
 k2c :: Num a => a -> a
@@ -85,11 +96,14 @@ f2h f
   | otherwise = "survivable"
 
 k2h :: (Ord a, Fractional a) => a -> String
-k2h  k = f2h $ c2f $ k2c k
+--k2h  k = f2h $ c2f $ k2c k
+k2h = f2h . c2f . k2c
 
 
 strip :: String -> String
-strip s = reverse $ dropWhile isSpace $ reverse $ dropWhile isSpace s
+--strip s = reverse $ dropWhile isSpace $ reverse $ dropWhile isSpace s
+strip = f . f
+  where f = reverse . dropWhile isSpace
 \end{code}
 
 
@@ -99,11 +113,11 @@ Combinators are especially useful when paired with other HOFs!
 
 \begin{code}
 flip :: (a -> b -> c) -> b -> a -> c
-flip = undefined
+flip f x y = f y x
 
 
 on :: (b -> b -> c) -> (a -> b) -> a -> a -> c
-on = undefined
+on f g x y = f (g x) (g y)
 \end{code}
 
 
@@ -114,7 +128,8 @@ Recursive patterns via HOFs
 
 \begin{code}
 map :: (a -> b) -> [a] -> [b]
-map = undefined
+map _ [] = []
+map f (x:xs) = f x : map f xs
 \end{code}
 
 
