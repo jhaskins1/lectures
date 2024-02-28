@@ -216,10 +216,11 @@ E.g., implement:
 > head' (x:_) = x
 >
 > tail' :: [a] -> [a]
-> tail' = undefined
+> tail' (_:xs) = xs
 > 
 > null' :: [a] -> Bool
-> null' = undefined
+> null' [] = True
+> null' _  = False
 
 
 -- Structural recursion
@@ -248,35 +249,50 @@ E.g., to compute the length of a list:
 E.g., implement more built-in functions:
 
 > last' :: [a] -> a
-> last' = undefined
+> last' (x:[]) = x
+> last' (_:xs) = last' xs
 >
 >
 > (+++) :: [a] -> [a] -> [a]
-> (+++) = undefined
+> [] +++ ys = ys
+> (x:xs) +++ ys = x : xs +++ ys
 >
 >
 > (!!!) :: [a] -> Int -> a -- the ! in its name is an implicit warning as to its inefficiency!
-> (!!!) = undefined
+> (x:_) !!! 0 = x
+> (_:xs) !!! n = xs !!! (n-1)
 >
 >
 > reverse' :: [a] -> [a]
-> reverse' = undefined
+> reverse' [] = []
+> reverse' (x:xs) = reverse' xs +++ [x] -- is there a more efficient way?
 >
 >
 > take' :: Int -> [a] -> [a]
-> take' = undefined
+> take' 0 _ = []
+> take' _ [] = []
+> take' n (x:xs) = x : take' (n-1) xs
 >
 >
 > splitAt' :: Int -> [a] -> ([a], [a])
-> splitAt' = undefined
+> splitAt' _ [] = ([],[])
+> splitAt' 0 xs = ([], xs)
+> splitAt' n (x:xs) = let (ys,zs) = splitAt' (n-1) xs
+>                     in (x:ys, zs)
 >
 >
 > break' :: (a -> Bool) -> [a] -> ([a], [a])
-> break' = undefined
+> break' _ [] = ([],[])
+> break' p l@(x:xs) | p x = ([], l)
+>                   | otherwise = let (ys, zs) = break' p xs
+>                                 in (x:ys, zs)
 >
 >
 > words' :: String -> [String]
-> words' = undefined
+> words' [] = []
+> words' l@(c:cs) | isSpace c = words' cs
+>                 | otherwise = let (w, ws) = break' isSpace l
+>                               in w : words' ws
 
 
 E.g., the Caesar cipher is an encryption scheme that takes a plain text input
@@ -295,4 +311,8 @@ determine if a character is a letter. We'll convert all letters to uppercase
 for simplicity with `toUpper`.
 
 > caesar :: Int -> String -> String
-> caesar = undefined
+> caesar _ [] = []
+> caesar n (x:xs) = (if isLetter x then encrypt x else x) : caesar n xs
+>   where encrypt x = n2l ((l2n x + n) `mod` 26)
+>         l2n c = ord (toUpper c) - ord 'A'
+>         n2l n = chr (n + ord 'A')

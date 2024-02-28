@@ -154,18 +154,19 @@ E.g.,
 \end{verbatim}
 
 
-
 2. Filter: keep only the elements of a list that satisfy a predicate.
 
-\begin{code}
+\begin{code} 
 filter :: (a -> Bool) -> [a] -> [a]
-filter = undefined
-\end{code}                 
-
+filter p [] = []
+filter p (x:xs) 
+  | p x = x : filter p xs
+  | otherwise : filter p xs
+\end{code} 
 
 E.g.,
 
-\begin{verbatim}
+\begin{verbatim} 
   filter even [1..10]
 
   take 10 $ filter even [1..]
@@ -179,17 +180,19 @@ E.g.,
   map (\w -> (w,length w)) $ 
       filter (\s -> reverse s == s) $ 
              words "madam I refer to adam"
-\end{verbatim}  
+\end{verbatim}
 
 
 3. All & Any
 
 \begin{code}
 all :: (a -> Bool) -> [a] -> Bool
-all = undefined
+all _ [] = True
+all p (x:xs) = p x && all p xs
 
 any :: (a -> Bool) -> [a] -> Bool
-any = undefined
+any _ [] = False
+any p (x:xs) = p x || any p xs
 \end{code}
 
 E.g.,
@@ -214,10 +217,15 @@ sort (x:xs) = sort [y | y <- xs, y < x]
 
 
 sortBy :: (a -> a -> Ordering) -> [a] -> [a]
-sortBy = undefined
+sortBy _ [] = []
+sortBy _ [x] = [x]
+sortBy cmp (x:xs) = sortBy cmp [y | y <- xs, cmp y x == LT]
+                    ++ [x] ++
+                    sortBy cmp [y | y <- xs, cmp y x /= LT]
 \end{code}
 
 E.g.,
+
 \begin{verbatim}
   sortBy (flip compare) [1..10]
 
